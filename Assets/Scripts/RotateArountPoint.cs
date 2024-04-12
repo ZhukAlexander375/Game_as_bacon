@@ -5,16 +5,18 @@ using UnityEngine;
 public class RotateArountPoint : MonoBehaviour
 {
     [SerializeField] private Transform _rotationPoint;
-    [SerializeField] private float _rotationSpeed;
-    [SerializeField] private float _returnRotationSpeed;
-    [SerializeField] private float _maxRotationAngle;
+    [SerializeField] private float _rotationSpeed = 100f;
+    [SerializeField] private float _returnRotationSpeed = 100f;
+    [SerializeField] private float _maxRotationAngle = 30f;
 
     private Quaternion initialRotation;
     private Vector3 initialPosition;
 
     [SerializeField] private bool isRotating = false;
     [SerializeField] private bool isReturning = false;
-    
+
+    [SerializeField] private Rigidbody2D _objectToThrow;
+    [SerializeField] private float _throwForce = 50f;   
 
     void Start()
     {
@@ -27,7 +29,7 @@ public class RotateArountPoint : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             isRotating = true;
-            isReturning = false;
+            isReturning = false;                        
         }
 
         else
@@ -70,12 +72,29 @@ public class RotateArountPoint : MonoBehaviour
 
         float angleDifference = Quaternion.Angle(initialRotation, transform.rotation);
 
-        if (angleDifference <= 0.5f)
+        if (angleDifference <= 1f)
         {
             transform.rotation = initialRotation;
             transform.position = initialPosition;
             isReturning = false;
         }  
-    }  
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isRotating)
+        {
+            if (collision.gameObject.CompareTag("Worm"))
+            {
+                ThrowObject();
+            }
+        }
+    }
+    private void ThrowObject()
+    {       
+
+        Vector2 throwDirection = (Vector2)(transform.position - _objectToThrow.transform.position);
+        _objectToThrow.AddForce(throwDirection.normalized * _throwForce, ForceMode2D.Impulse);
+    }
 }
 
