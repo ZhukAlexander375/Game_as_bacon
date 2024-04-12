@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Target : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Target : MonoBehaviour
     [SerializeField] private float _timer = 0f;
     [SerializeField] private bool _isObjectStopped = false;
     private float _wormVelocity;
+    public UnityEvent OnWinning = new();
 
     private void FixedUpdate()
     {
@@ -38,6 +40,7 @@ public class Target : MonoBehaviour
     private void Win()
     {
         Debug.Log("Win");
+        OnWinning.Invoke();
         _isObjectStopped = false;
         _timer = 0f;
         _worm.ReturnToInitialPosition();
